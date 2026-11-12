@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emergency Response System</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+body { background: #FBFBFB; color: #333333; padding: 20px; line-height: 1.4; font-size: 14px; }
+h1 { font-size: 22px; font-weight: 700; margin-bottom: 2px; }
+.sub { color: #666; font-size: 13px; margin-bottom: 12px; }
+.grid { display: grid; grid-template-columns: 310px 1fr 320px; gap: 16px; align-items: start; }
+.card { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; }
+.card h2 { font-size: 15px; font-weight: 600; margin-bottom: 12px; border-bottom: 1px solid #F0F0F0; padding-bottom: 6px; }
+label { display: block; font-size: 12px; font-weight: 500; margin-top: 8px; margin-bottom: 2px; }
+input, select { width: 100%; padding: 7px 10px; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 13px; background: #FAFAFA; }
+button { width: 100%; padding: 9px; margin-top: 12px; background: #BFD7ED; border: 1px solid #9BBFD9; border-radius: 6px; font-weight: 600; color: #1E3A5F; cursor: pointer; }
+button.secondary { background: #F8C8DC; border-color: #E2A6BE; color: #6B213F; }
+button.danger { background: #F8C8DC; border-color: #DDA0B8; color: #581C2E; padding: 6px; margin: 8px 0; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.b-crit { background: #F8C8DC; color: #731A3B; }
+.b-amb { background: #BFD7ED; color: #164069; }
+.b-hosp { background: #C7E8CA; color: #1B4D20; }
+.route-box { margin-top: 10px; padding: 10px; border-radius: 6px; font-size: 12px; border: 1px solid #E5E7EB; }
+.r1 { background: #F0F6FC; border-left: 4px solid #BFD7ED; }
+.r2 { background: #F2F9F3; border-left: 4px solid #C7E8CA; }
+.corridor { display: flex; align-items: center; justify-content: space-between; background: #FAFAFA; border: 1px solid #E5E7EB; border-radius: 6px; padding: 12px; margin-top: 12px; }
+.c-node { text-align: center; flex: 1; }
+.c-node strong { display: block; font-size: 12px; color: #1E3A5F; }
+.c-node span { font-size: 11px; color: #666; }
+.c-arrow { font-size: 11px; color: #888; padding: 0 4px; text-align: center; font-weight: 600; }
+.rationale { background: #FFF8E7; padding: 8px; border-radius: 6px; border: 1px solid #FCE8B2; font-size: 12px; margin-top: 10px; }
+.stat-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #F5F5F5; font-size: 12px; }
+.active-unit { background: #EFF6FF; border: 1px solid #BFD7ED; border-radius: 4px; padding: 6px 8px; font-size: 11px; margin-top: 6px; }
+.hist-item { padding: 6px 0; border-bottom: 1px solid #EEE; font-size: 11px; }
+.mode-pill { float: right; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: normal; }
+@media (max-width: 900px) {
+  .grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<h1>Emergency Response System <span id="engine-mode" class="mode-pill b-amb">Initializing...</span></h1>
+<div class="sub">Automated Incident Triage, Ambulance Allocation & Route Optimization</div>
+
+<div class="grid">
+  <!-- Left: Patient Intake Form -->
+  <div class="card">
+    <h2>Patient Intake</h2>
+    <form id="p-form" onsubmit="submitPatient(event)">
+      <label>Patient Full Name</label>
+      <input type="text" id="p-name" value="Rahul Sharma" required>
+      <label>Age & Gender</label>
+      <div style="display:flex; gap:6px;">
+        <input type="number" id="p-age" value="54" style="width:70px;" required>
+        <select id="p-gender"><option>M</option><option>F</option><option>Other</option></select>
+      </div>
+      <label>Pickup Location</label>
+      <select id="p-loc">
+        <option value="Connaught Place">Connaught Place</option>
+        <option value="Dwarka">Dwarka</option>
+        <option value="Rohini">Rohini</option>
+        <option value="Saket">Saket</option>
+        <option value="Lajpat Nagar">Lajpat Nagar</option>
+        <option value="Noida Sec 62">Noida Sec 62</option>
+        <option value="Noida Sec 18">Noida Sec 18</option>
+        <option value="Greater Noida Pari Chowk">Greater Noida Pari Chowk</option>
+        <option value="Gurugram Cyber Hub">Gurugram Cyber Hub</option>
+        <option value="Gurugram IFFCO Chowk">Gurugram IFFCO Chowk</option>
+        <option value="Vaishali">Vaishali</option>
+        <option value="Karol Bagh">Karol Bagh</option>
+        <option value="Janakpuri">Janakpuri</option>
+        <option value="Mayur Vihar">Mayur Vihar</option>
+        <option value="Vasant Kunj">Vasant Kunj</option>
+        <option value="Okhla">Okhla</option>
+        <option value="Punjabi Bagh">Punjabi Bagh</option>
+        <option value="Anand Vihar">Anand Vihar</option>
+        <option value="Hauz Khas">Hauz Khas</option>
+        <option value="Nehru Place">Nehru Place</option>
+        <option value="Ghaziabad Old Bus Stand">Ghaziabad Old Bus Stand</option>
+        <option value="Faridabad Badarpur Border">Faridabad Badarpur Border</option>
+        <option value="Noida Electronic City">Noida Electronic City</option>
+        <option value="Indirapuram">Indirapuram</option>
+        <option value="Rajouri Garden">Rajouri Garden</option>
+      </select>
+      <label>Emergency Type</label>
+      <select id="p-type">
+        <option value="cardiac">Cardiac Arrest</option>
+        <option value="trauma">Trauma / Accident</option>
+        <option value="stroke">Stroke / Brain Attack</option>
+        <option value="pregnancy">Pregnancy / Labor</option>
+        <option value="burns">Severe Burns</option>
+        <option value="breathing">Respiratory Distress</option>
+        <option value="general">General Emergency</option>
+      </select>
+      <label>Triage Severity</label>
+      <select id="p-sev">
+        <option value="Critical">Critical (Immediate)</option>
+        <option value="High">High Priority</option>
+        <option value="Medium">Medium Priority</option>
+        <option value="Low">Low Priority</option>
+      </select>
+      <div style="display:flex; gap:8px; margin-top:12px;">
+        <button type="button" style="background:#C7E8CA; border-color:#99CCA0; color:#18451D; margin-top:0;" onclick="enqueuePatient()">+ Add to Waiting Queue</button>
+        <button type="submit" style="margin-top:0;">Auto-Dispatch (Instant)</button>
+      </div>
+    </form>
+    <div style="margin-top:16px; border-top:1px solid #EEE; padding-top:10px;">
+      <label>Simulate Road Closure</label>
+      <select id="blk-road">
+        <option value="Lajpat Nagar|Noida Sec 18">DND Flyway (Lajpat Nagar - Noida Sec 18)</option>
+        <option value="Connaught Place|Gurugram Cyber Hub">NH-48 (Connaught Place - Cyber Hub)</option>
+        <option value="Noida Sec 62|Indirapuram">NH-24 Link (Noida 62 - Indirapuram)</option>
+      </select>
+      <button type="button" class="secondary" onclick="toggleRoad()">Toggle Road Block</button>
+      <div id="road-msg" style="font-size:11px; color:#555; margin-top:4px;"></div>
+    </div>
+  </div>
+
+  <!-- Center: Result & Visual Corridor -->
+  <div class="card">
+    <h2>Automated Dispatch Result</h2>
+    <div id="no-res" style="color:#888; font-size:13px; padding:20px 0;">Enter patient details to trigger automatic unit assignment, hospital selection, and shortest-path routing.</div>
+    <div id="res-box" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div><strong id="r-patient" style="font-size:15px;"></strong> <span id="r-badge" class="badge"></span></div>
+        <div>Total ETA: <strong id="r-eta" style="color:#C0392B; font-size:15px;"></strong> min</div>
+      </div>
+
+      <!-- Clean Visual Corridor Flow -->
+      <div class="corridor">
+        <div class="c-node"><span class="badge b-amb">Unit Origin</span><strong id="c-amb-base">Station</strong><span id="c-amb-plate"></span></div>
+        <div class="c-arrow">&rarr;<br><span id="c-leg1" style="font-size:10px; color:#2563EB;"></span></div>
+        <div class="c-node"><span class="badge b-crit">Pickup</span><strong id="c-pickup">Location</strong><span>Patient</span></div>
+        <div class="c-arrow">&rarr;<br><span id="c-leg2" style="font-size:10px; color:#059669;"></span></div>
+        <div class="c-node"><span class="badge b-hosp">Destination</span><strong id="c-hospital">Hospital</strong><span id="c-beds-left"></span></div>
+      </div>
+
+      <div class="route-box r1">
+        <strong>Route 1: Ambulance to Patient</strong>
+        <div id="r-amb-info" style="margin:2px 0;"></div>
+        <div>Path: <span id="r1-path"></span></div>
+        <div>Travel Time: <span id="r1-time"></span> min (<span id="r1-dist"></span> km)</div>
+      </div>
+      <div class="route-box r2">
+        <strong>Route 2: Patient to Hospital</strong>
+        <div id="r-hosp-info" style="margin:2px 0;"></div>
+        <div>Path: <span id="r2-path"></span></div>
+        <div>Travel Time: <span id="r2-time"></span> min (<span id="r2-dist"></span> km)</div>
+      </div>
+      <div class="rationale"><strong>Decision Rationale:</strong> <span id="r-why"></span></div>
+      <div style="margin-top:10px; font-size:11px;">
+        <strong>Alternative Hospitals Ranked:</strong>
+        <ul id="r-alts" style="margin-left:18px; margin-top:3px; color:#555;"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Live Fleet & History -->
+  <div class="card">
+    <h2>Live System Status</h2>
+    <div class="stat-row"><span>Available Fleet:</span><strong id="st-avail" class="badge b-amb">50 / 50</strong></div>
+    <div class="stat-row"><span>Busy Fleet:</span><strong id="st-busy">0</strong></div>
+    <div class="stat-row"><span>Critical Queue:</span><strong id="st-heap" class="badge b-crit">0</strong></div>
+    <div class="stat-row"><span>Standard Queue:</span><strong id="st-queue">0</strong></div>
+    <button type="button" style="background:#FFE699; border-color:#E6C200; color:#664D00; margin-top:6px; padding:7px;" onclick="dispatchNext()">Dispatch Next (Priority Order)</button>
+
+    <div id="queue-box" style="margin-top:8px; display:none;">
+      <strong style="font-size:11px;">Waiting in Triage Queue:</strong>
+      <div id="queue-list" style="max-height:85px; overflow-y:auto; margin-top:4px;"></div>
+    </div>
+    <div class="stat-row" style="margin-top:6px;"><span>Network Connectivity:</span><strong id="st-comps">Connected</strong></div>
+
+    <div style="margin-top:10px;">
+      <strong style="font-size:12px;">Active Ambulances in Transit:</strong>
+      <div id="busy-list" style="margin-top:4px;"><span style="color:#888; font-size:11px;">All units currently available.</span></div>
+    </div>
+
+    <h2 style="margin-top:16px;">Dispatch History</h2>
+    <button class="danger" onclick="undoDispatch()">Undo Last Dispatch</button>
+    <div id="hist-list" style="max-height:160px; overflow-y:auto;"></div>
+  </div>
+</div>
+
+<script>
+// --- EMBEDDED DATASET FOR CLOUD/VERCEL ZERO-DEPENDENCY DEPLOYMENT ---
+const RAW_HOSPITALS = [{"id": 1, "name": "AIIMS Delhi", "area": "Ansari Nagar", "lat": 28.5672, "lng": 77.21, "total_beds": 2400, "free_beds": 48, "icu_total": 200, "icu_free": 6, "specialties": "cardiac|trauma|neuro|burns|maternity|general", "has_emergency": 1}, {"id": 2, "name": "Safdarjung Hospital", "area": "Ansari Nagar", "lat": 28.5685, "lng": 77.207, "total_beds": 1800, "free_beds": 62, "icu_total": 150, "icu_free": 8, "specialties": "cardiac|trauma|neuro|burns|maternity|general", "has_emergency": 1}, {"id": 3, "name": "RML Hospital", "area": "Connaught Place", "lat": 28.6258, "lng": 77.2023, "total_beds": 1400, "free_beds": 35, "icu_total": 120, "icu_free": 4, "specialties": "cardiac|trauma|neuro|general", "has_emergency": 1}, {"id": 4, "name": "LNJP Hospital", "area": "Delhi Gate", "lat": 28.6385, "lng": 77.241, "total_beds": 2000, "free_beds": 70, "icu_total": 160, "icu_free": 12, "specialties": "trauma|burns|maternity|general", "has_emergency": 1}, {"id": 5, "name": "GB Pant Hospital", "area": "Delhi Gate", "lat": 28.637, "lng": 77.2415, "total_beds": 700, "free_beds": 22, "icu_total": 90, "icu_free": 3, "specialties": "cardiac|neuro|general", "has_emergency": 1}, {"id": 6, "name": "Sir Ganga Ram Hospital", "area": "Rajinder Nagar", "lat": 28.638, "lng": 77.1895, "total_beds": 675, "free_beds": 40, "icu_total": 110, "icu_free": 9, "specialties": "cardiac|neuro|maternity|general", "has_emergency": 1}, {"id": 7, "name": "Max Super Speciality Saket", "area": "Saket", "lat": 28.5275, "lng": 77.212, "total_beds": 530, "free_beds": 28, "icu_total": 85, "icu_free": 5, "specialties": "cardiac|trauma|neuro|maternity|general", "has_emergency": 1}, {"id": 8, "name": "Max Super Speciality Patparganj", "area": "Patparganj", "lat": 28.629, "lng": 77.3075, "total_beds": 400, "free_beds": 24, "icu_total": 70, "icu_free": 4, "specialties": "cardiac|neuro|general", "has_emergency": 1}, {"id": 9, "name": "Fortis Flt Lt Rajan Dhall", "area": "Vasant Kunj", "lat": 28.5245, "lng": 77.1585, "total_beds": 200, "free_beds": 15, "icu_total": 40, "icu_free": 3, "specialties": "cardiac|trauma|general", "has_emergency": 1}, {"id": 10, "name": "Fortis Hospital Shalimar Bagh", "area": "Shalimar Bagh", "lat": 28.716, "lng": 77.1645, "total_beds": 260, "free_beds": 18, "icu_total": 50, "icu_free": 4, "specialties": "cardiac|neuro|maternity|general", "has_emergency": 1}, {"id": 11, "name": "Indraprastha Apollo Hospital", "area": "Sarita Vihar", "lat": 28.541, "lng": 77.284, "total_beds": 710, "free_beds": 45, "icu_total": 120, "icu_free": 10, "specialties": "cardiac|trauma|neuro|maternity|general", "has_emergency": 1}, {"id": 12, "name": "BLK-Max Super Speciality", "area": "Karol Bagh", "lat": 28.644, "lng": 77.18, "total_beds": 650, "free_beds": 32, "icu_total": 100, "icu_free": 7, "specialties": "cardiac|neuro|trauma|general", "has_emergency": 1}, {"id": 13, "name": "Moolchand Hospital", "area": "Lajpat Nagar", "lat": 28.568, "lng": 77.234, "total_beds": 300, "free_beds": 20, "icu_total": 50, "icu_free": 5, "specialties": "cardiac|maternity|general", "has_emergency": 1}, {"id": 14, "name": "Holy Family Hospital", "area": "Okhla", "lat": 28.562, "lng": 77.276, "total_beds": 345, "free_beds": 22, "icu_total": 55, "icu_free": 4, "specialties": "cardiac|maternity|general", "has_emergency": 1}, {"id": 15, "name": "Venkateshwar Hospital", "area": "Dwarka", "lat": 28.591, "lng": 77.042, "total_beds": 325, "free_beds": 26, "icu_total": 60, "icu_free": 5, "specialties": "cardiac|trauma|neuro|general", "has_emergency": 1}, {"id": 16, "name": "Manipal Hospital Dwarka", "area": "Dwarka", "lat": 28.588, "lng": 77.06, "total_beds": 380, "free_beds": 30, "icu_total": 75, "icu_free": 6, "specialties": "cardiac|trauma|neuro|maternity|general", "has_emergency": 1}, {"id": 17, "name": "Maharaja Agrasen Hospital", "area": "Punjabi Bagh", "lat": 28.671, "lng": 77.129, "total_beds": 400, "free_beds": 25, "icu_total": 70, "icu_free": 4, "specialties": "trauma|cardiac|general", "has_emergency": 1}, {"id": 18, "name": "Deen Dayal Upadhyay Hospital", "area": "Hari Nagar", "lat": 28.628, "lng": 77.112, "total_beds": 640, "free_beds": 38, "icu_total": 80, "icu_free": 5, "specialties": "trauma|maternity|burns|general", "has_emergency": 1}, {"id": 19, "name": "Medanta The Medicity", "area": "Sector 38 Gurugram", "lat": 28.439, "lng": 77.043, "total_beds": 1250, "free_beds": 80, "icu_total": 250, "icu_free": 18, "specialties": "cardiac|trauma|neuro|burns|maternity|general", "has_emergency": 1}, {"id": 20, "name": "Artemis Hospital", "area": "Sector 51 Gurugram", "lat": 28.435, "lng": 77.078, "total_beds": 400, "free_beds": 35, "icu_total": 75, "icu_free": 7, "specialties": "cardiac|neuro|trauma|maternity|general", "has_emergency": 1}, {"id": 21, "name": "Fortis Memorial Research Institute", "area": "Sector 44 Gurugram", "lat": 28.459, "lng": 77.0725, "total_beds": 300, "free_beds": 22, "icu_total": 65, "icu_free": 4, "specialties": "cardiac|trauma|neuro|general", "has_emergency": 1}, {"id": 22, "name": "Max Super Speciality Vaishali", "area": "Vaishali", "lat": 28.646, "lng": 77.338, "total_beds": 370, "free_beds": 28, "icu_total": 65, "icu_free": 5, "specialties": "cardiac|neuro|trauma|maternity|general", "has_emergency": 1}, {"id": 23, "name": "Yatharth Super Speciality Noida", "area": "Sector 110 Noida", "lat": 28.528, "lng": 77.389, "total_beds": 300, "free_beds": 20, "icu_total": 55, "icu_free": 3, "specialties": "cardiac|trauma|general", "has_emergency": 1}, {"id": 24, "name": "Fortis Hospital Noida", "area": "Sector 62 Noida", "lat": 28.619, "lng": 77.3685, "total_beds": 200, "free_beds": 18, "icu_total": 45, "icu_free": 4, "specialties": "cardiac|neuro|trauma|general", "has_emergency": 1}, {"id": 25, "name": "Jaypee Hospital Noida", "area": "Sector 128 Noida", "lat": 28.517, "lng": 77.369, "total_beds": 500, "free_beds": 42, "icu_total": 90, "icu_free": 8, "specialties": "cardiac|trauma|neuro|maternity|general", "has_emergency": 1}, {"id": 26, "name": "Kailash Hospital Noida", "area": "Sector 27 Noida", "lat": 28.574, "lng": 77.333, "total_beds": 250, "free_beds": 16, "icu_total": 45, "icu_free": 3, "specialties": "cardiac|trauma|general", "has_emergency": 1}, {"id": 27, "name": "Metro Hospital Noida", "area": "Sector 11 Noida", "lat": 28.598, "lng": 77.331, "total_beds": 315, "free_beds": 24, "icu_total": 60, "icu_free": 5, "specialties": "cardiac|neuro|general", "has_emergency": 1}, {"id": 28, "name": "Sharda Hospital", "area": "Knowledge Park Greater Noida", "lat": 28.473, "lng": 77.482, "total_beds": 900, "free_beds": 65, "icu_total": 140, "icu_free": 12, "specialties": "cardiac|trauma|maternity|burns|general", "has_emergency": 1}, {"id": 29, "name": "GIMS Hospital", "area": "Greater Noida", "lat": 28.455, "lng": 77.502, "total_beds": 500, "free_beds": 45, "icu_total": 80, "icu_free": 8, "specialties": "trauma|maternity|burns|general", "has_emergency": 1}, {"id": 30, "name": "Columbia Asia Hospital", "area": "Ghaziabad", "lat": 28.665, "lng": 77.442, "total_beds": 100, "free_beds": 8, "icu_total": 25, "icu_free": 2, "specialties": "cardiac|general", "has_emergency": 1}, {"id": 31, "name": "Sarvodaya Hospital", "area": "Sector 8 Faridabad", "lat": 28.378, "lng": 77.338, "total_beds": 450, "free_beds": 34, "icu_total": 80, "icu_free": 6, "specialties": "cardiac|trauma|neuro|maternity|general", "has_emergency": 1}, {"id": 32, "name": "Asian Institute of Medical Sciences", "area": "Sector 21A Faridabad", "lat": 28.411, "lng": 77.299, "total_beds": 350, "free_beds": 26, "icu_total": 65, "icu_free": 5, "specialties": "cardiac|trauma|neuro|general", "has_emergency": 1}, {"id": 33, "name": "QRG Super Speciality Hospital", "area": "Sector 16 Faridabad", "lat": 28.418, "lng": 77.321, "total_beds": 400, "free_beds": 30, "icu_total": 75, "icu_free": 6, "specialties": "cardiac|trauma|maternity|general", "has_emergency": 1}, {"id": 34, "name": "Apollo Spectra Hospital", "area": "Kailash Colony", "lat": 28.553, "lng": 77.243, "total_beds": 100, "free_beds": 12, "icu_total": 20, "icu_free": 2, "specialties": "general|maternity", "has_emergency": 1}, {"id": 35, "name": "Yashoda Super Speciality Hospital", "area": "Kaushambi", "lat": 28.644, "lng": 77.322, "total_beds": 300, "free_beds": 22, "icu_total": 50, "icu_free": 4, "specialties": "cardiac|trauma|neuro|burns|general", "has_emergency": 1}];
+const RAW_AMBULANCES = [{"id": 1, "vehicle_no": "DL-01-EA-1001", "type": "ALS", "base": "AIIMS Delhi", "status": "available", "driver_name": "Ramesh Kumar", "driver_phone": "+91-98110-10001"}, {"id": 2, "vehicle_no": "DL-01-EA-1002", "type": "BLS", "base": "AIIMS Delhi", "status": "available", "driver_name": "Sunil Sharma", "driver_phone": "+91-98110-10002"}, {"id": 3, "vehicle_no": "DL-01-EA-1003", "type": "neonatal", "base": "AIIMS Delhi", "status": "available", "driver_name": "Vikram Singh", "driver_phone": "+91-98110-10003"}, {"id": 4, "vehicle_no": "DL-01-EA-1004", "type": "ALS", "base": "Safdarjung Hospital", "status": "available", "driver_name": "Rajesh Yadav", "driver_phone": "+91-98110-10004"}, {"id": 5, "vehicle_no": "DL-01-EA-1005", "type": "BLS", "base": "Safdarjung Hospital", "status": "available", "driver_name": "Amit Verma", "driver_phone": "+91-98110-10005"}, {"id": 6, "vehicle_no": "DL-02-CD-2001", "type": "ALS", "base": "RML Hospital", "status": "available", "driver_name": "Manoj Tiwari", "driver_phone": "+91-98110-10006"}, {"id": 7, "vehicle_no": "DL-02-CD-2002", "type": "BLS", "base": "RML Hospital", "status": "available", "driver_name": "Deepak Chauhan", "driver_phone": "+91-98110-10007"}, {"id": 8, "vehicle_no": "DL-03-EF-3001", "type": "ALS", "base": "LNJP Hospital", "status": "available", "driver_name": "Sanjay Gupta", "driver_phone": "+91-98110-10008"}, {"id": 9, "vehicle_no": "DL-03-EF-3002", "type": "BLS", "base": "LNJP Hospital", "status": "available", "driver_name": "Pankaj Rawat", "driver_phone": "+91-98110-10009"}, {"id": 10, "vehicle_no": "DL-03-EF-3003", "type": "neonatal", "base": "LNJP Hospital", "status": "available", "driver_name": "Anil Mishra", "driver_phone": "+91-98110-10010"}, {"id": 11, "vehicle_no": "DL-02-GH-4001", "type": "ALS", "base": "GB Pant Hospital", "status": "available", "driver_name": "Pradeep Negi", "driver_phone": "+91-98110-10011"}, {"id": 12, "vehicle_no": "DL-04-IJ-5001", "type": "ALS", "base": "Sir Ganga Ram Hospital", "status": "available", "driver_name": "Mahesh Joshi", "driver_phone": "+91-98110-10012"}, {"id": 13, "vehicle_no": "DL-04-IJ-5002", "type": "BLS", "base": "Sir Ganga Ram Hospital", "status": "available", "driver_name": "Ajay Saxena", "driver_phone": "+91-98110-10013"}, {"id": 14, "vehicle_no": "DL-01-KL-6001", "type": "ALS", "base": "Max Super Speciality Saket", "status": "available", "driver_name": "Ravi Tomar", "driver_phone": "+91-98110-10014"}, {"id": 15, "vehicle_no": "DL-01-KL-6002", "type": "BLS", "base": "Max Super Speciality Saket", "status": "available", "driver_name": "Dharmendra Tyagi", "driver_phone": "+91-98110-10015"}, {"id": 16, "vehicle_no": "DL-05-MN-7001", "type": "ALS", "base": "Max Super Speciality Patparganj", "status": "available", "driver_name": "Satish Bhati", "driver_phone": "+91-98110-10016"}, {"id": 17, "vehicle_no": "DL-05-MN-7002", "type": "BLS", "base": "Max Super Speciality Patparganj", "status": "available", "driver_name": "Harish Bisht", "driver_phone": "+91-98110-10017"}, {"id": 18, "vehicle_no": "DL-01-OP-8001", "type": "ALS", "base": "Fortis Flt Lt Rajan Dhall", "status": "available", "driver_name": "Kishore Pal", "driver_phone": "+91-98110-10018"}, {"id": 19, "vehicle_no": "DL-06-QR-9001", "type": "ALS", "base": "Fortis Hospital Shalimar Bagh", "status": "available", "driver_name": "Devendra Saini", "driver_phone": "+91-98110-10019"}, {"id": 20, "vehicle_no": "DL-06-QR-9002", "type": "BLS", "base": "Fortis Hospital Shalimar Bagh", "status": "available", "driver_name": "Vinod Nagar", "driver_phone": "+91-98110-10020"}, {"id": 21, "vehicle_no": "DL-07-ST-1011", "type": "ALS", "base": "Indraprastha Apollo Hospital", "status": "available", "driver_name": "Kuldeep Malik", "driver_phone": "+91-98110-10021"}, {"id": 22, "vehicle_no": "DL-07-ST-1012", "type": "neonatal", "base": "Indraprastha Apollo Hospital", "status": "available", "driver_name": "Joginder Rathi", "driver_phone": "+91-98110-10022"}, {"id": 23, "vehicle_no": "DL-04-UV-1013", "type": "ALS", "base": "BLK-Max Super Speciality", "status": "available", "driver_name": "Birender Dahiya", "driver_phone": "+91-98110-10023"}, {"id": 24, "vehicle_no": "DL-01-WX-1014", "type": "BLS", "base": "Moolchand Hospital", "status": "available", "driver_name": "Suraj Prajapati", "driver_phone": "+91-98110-10024"}, {"id": 25, "vehicle_no": "DL-07-YZ-1015", "type": "BLS", "base": "Holy Family Hospital", "status": "available", "driver_name": "Mukesh Pandey", "driver_phone": "+91-98110-10025"}, {"id": 26, "vehicle_no": "DL-09-AB-1016", "type": "ALS", "base": "Venkateshwar Hospital", "status": "available", "driver_name": "Gaurav Bhatt", "driver_phone": "+91-98110-10026"}, {"id": 27, "vehicle_no": "DL-09-AB-1017", "type": "BLS", "base": "Manipal Hospital Dwarka", "status": "available", "driver_name": "Naveen Goswami", "driver_phone": "+91-98110-10027"}, {"id": 28, "vehicle_no": "DL-08-CD-1018", "type": "BLS", "base": "Maharaja Agrasen Hospital", "status": "available", "driver_name": "Subhash Chand", "driver_phone": "+91-98110-10028"}, {"id": 29, "vehicle_no": "DL-08-CD-1019", "type": "BLS", "base": "Deen Dayal Upadhyay Hospital", "status": "available", "driver_name": "Santosh Koli", "driver_phone": "+91-98110-10029"}, {"id": 30, "vehicle_no": "HR-26-EM-2001", "type": "ALS", "base": "Medanta The Medicity", "status": "available", "driver_name": "Ashok Lodhi", "driver_phone": "+91-98110-10030"}, {"id": 31, "vehicle_no": "HR-26-EM-2002", "type": "BLS", "base": "Medanta The Medicity", "status": "available", "driver_name": "Brijesh Pathak", "driver_phone": "+91-98110-10031"}, {"id": 32, "vehicle_no": "HR-26-EM-2003", "type": "neonatal", "base": "Medanta The Medicity", "status": "available", "driver_name": "Rohit Tanwar", "driver_phone": "+91-98110-10032"}, {"id": 33, "vehicle_no": "HR-26-EM-2004", "type": "ALS", "base": "Artemis Hospital", "status": "available", "driver_name": "Lalit Baisoya", "driver_phone": "+91-98110-10033"}, {"id": 34, "vehicle_no": "HR-26-EM-2005", "type": "ALS", "base": "Fortis Memorial Research Institute", "status": "available", "driver_name": "Manish Dedha", "driver_phone": "+91-98110-10034"}, {"id": 35, "vehicle_no": "UP-14-AM-3001", "type": "ALS", "base": "Max Super Speciality Vaishali", "status": "available", "driver_name": "Naresh Awana", "driver_phone": "+91-98110-10035"}, {"id": 36, "vehicle_no": "UP-16-AM-4001", "type": "BLS", "base": "Yatharth Super Speciality Noida", "status": "available", "driver_name": "Omkar Kashyap", "driver_phone": "+91-98110-10036"}, {"id": 37, "vehicle_no": "UP-16-AM-4002", "type": "ALS", "base": "Fortis Hospital Noida", "status": "available", "driver_name": "Pawan Giri", "driver_phone": "+91-98110-10037"}, {"id": 38, "vehicle_no": "UP-16-AM-4003", "type": "BLS", "base": "Fortis Hospital Noida", "status": "available", "driver_name": "Ramanuj Shukla", "driver_phone": "+91-98110-10038"}, {"id": 39, "vehicle_no": "UP-16-AM-4004", "type": "ALS", "base": "Jaypee Hospital Noida", "status": "available", "driver_name": "Sachin Khatana", "driver_phone": "+91-98110-10039"}, {"id": 40, "vehicle_no": "UP-16-AM-4005", "type": "neonatal", "base": "Jaypee Hospital Noida", "status": "available", "driver_name": "Tarun Gujjar", "driver_phone": "+91-98110-10040"}, {"id": 41, "vehicle_no": "UP-16-AM-4006", "type": "ALS", "base": "Kailash Hospital Noida", "status": "available", "driver_name": "Umesh Kasana", "driver_phone": "+91-98110-10041"}, {"id": 42, "vehicle_no": "UP-16-AM-4007", "type": "BLS", "base": "Metro Hospital Noida", "status": "available", "driver_name": "Vijay Bhadana", "driver_phone": "+91-98110-10042"}, {"id": 43, "vehicle_no": "UP-16-AM-4008", "type": "ALS", "base": "Sharda Hospital", "status": "available", "driver_name": "Yogesh Bidhuri", "driver_phone": "+91-98110-10043"}, {"id": 44, "vehicle_no": "UP-16-AM-4009", "type": "BLS", "base": "Sharda Hospital", "status": "available", "driver_name": "Akhilesh Maurya", "driver_phone": "+91-98110-10044"}, {"id": 45, "vehicle_no": "UP-16-AM-4010", "type": "BLS", "base": "GIMS Hospital", "status": "available", "driver_name": "Chandan Jha", "driver_phone": "+91-98110-10045"}, {"id": 46, "vehicle_no": "UP-14-AM-3002", "type": "BLS", "base": "Columbia Asia Hospital", "status": "available", "driver_name": "Dinesh Paswan", "driver_phone": "+91-98110-10046"}, {"id": 47, "vehicle_no": "HR-51-EM-5001", "type": "ALS", "base": "Sarvodaya Hospital", "status": "available", "driver_name": "Girish Arya", "driver_phone": "+91-98110-10047"}, {"id": 48, "vehicle_no": "HR-51-EM-5002", "type": "ALS", "base": "Asian Institute of Medical Sciences", "status": "available", "driver_name": "Hemant Baghel", "driver_phone": "+91-98110-10048"}, {"id": 49, "vehicle_no": "HR-51-EM-5003", "type": "BLS", "base": "QRG Super Speciality Hospital", "status": "available", "driver_name": "Inderjeet Chauhan", "driver_phone": "+91-98110-10049"}, {"id": 50, "vehicle_no": "UP-14-AM-3003", "type": "ALS", "base": "Yashoda Super Speciality Hospital", "status": "available", "driver_name": "Jagdish Meena", "driver_phone": "+91-98110-10050"}];
+const RAW_ROADS = [{"u": "AIIMS Delhi", "v": "Connaught Place", "km": 7.18, "min": 12.3, "tf": 1.5}, {"u": "AIIMS Delhi", "v": "Hauz Khas", "km": 2.2, "min": 3.8, "tf": 1.1}, {"u": "AIIMS Delhi", "v": "Lajpat Nagar", "km": 2.95, "min": 5.1, "tf": 1.3}, {"u": "AIIMS Delhi", "v": "Max Super Speciality Saket", "km": 4.42, "min": 7.6, "tf": 1.2}, {"u": "AIIMS Delhi", "v": "Moolchand Hospital", "km": 2.35, "min": 4.0, "tf": 1.2}, {"u": "AIIMS Delhi", "v": "Safdarjung Hospital", "km": 0.33, "min": 2.0, "tf": 1.0}, {"u": "AIIMS Delhi", "v": "Saket", "km": 4.76, "min": 8.2, "tf": 1.2}, {"u": "Anand Vihar", "v": "Max Super Speciality Patparganj", "km": 2.16, "min": 3.7, "tf": 1.0}, {"u": "Anand Vihar", "v": "Max Super Speciality Vaishali", "km": 2.15, "min": 3.7, "tf": 1.0}, {"u": "Anand Vihar", "v": "Mayur Vihar", "km": 4.71, "min": 8.1, "tf": 1.4}, {"u": "Anand Vihar", "v": "Vaishali", "km": 2.38, "min": 4.1, "tf": 1.3}, {"u": "Anand Vihar", "v": "Yashoda Super Speciality Hospital", "km": 0.67, "min": 2.0, "tf": 1.4}, {"u": "Apollo Spectra Hospital", "v": "Holy Family Hospital", "km": 3.37, "min": 5.8, "tf": 1.1}, {"u": "Apollo Spectra Hospital", "v": "Indraprastha Apollo Hospital", "km": 4.22, "min": 7.2, "tf": 1.4}, {"u": "Apollo Spectra Hospital", "v": "Lajpat Nagar", "km": 1.91, "min": 3.3, "tf": 1.0}, {"u": "Apollo Spectra Hospital", "v": "Max Super Speciality Saket", "km": 4.15, "min": 7.1, "tf": 1.2}, {"u": "Apollo Spectra Hospital", "v": "Moolchand Hospital", "km": 1.89, "min": 3.2, "tf": 1.2}, {"u": "Apollo Spectra Hospital", "v": "Nehru Place", "km": 1.07, "min": 2.0, "tf": 1.3}, {"u": "Apollo Spectra Hospital", "v": "Okhla", "km": 3.53, "min": 6.1, "tf": 1.0}, {"u": "Artemis Hospital", "v": "Fortis Memorial Research Institute", "km": 2.72, "min": 4.7, "tf": 1.3}, {"u": "Artemis Hospital", "v": "Gurugram Cyber Hub", "km": 6.78, "min": 11.6, "tf": 1.2}, {"u": "Artemis Hospital", "v": "Gurugram IFFCO Chowk", "km": 4.19, "min": 7.2, "tf": 1.3}, {"u": "Artemis Hospital", "v": "Medanta The Medicity", "km": 3.45, "min": 5.9, "tf": 1.4}, {"u": "Asian Institute of Medical Sciences", "v": "Faridabad Badarpur Border", "km": 8.78, "min": 15.1, "tf": 1.3}, {"u": "Asian Institute of Medical Sciences", "v": "Jaypee Hospital Noida", "km": 13.63, "min": 23.4, "tf": 1.2}, {"u": "Asian Institute of Medical Sciences", "v": "QRG Super Speciality Hospital", "km": 2.29, "min": 3.9, "tf": 1.1}, {"u": "Asian Institute of Medical Sciences", "v": "Sarvodaya Hospital", "km": 5.29, "min": 9.1, "tf": 1.3}, {"u": "BLK-Max Super Speciality", "v": "Connaught Place", "km": 3.84, "min": 6.6, "tf": 1.2}, {"u": "BLK-Max Super Speciality", "v": "Karol Bagh", "km": 1.33, "min": 2.3, "tf": 1.0}, {"u": "BLK-Max Super Speciality", "v": "RML Hospital", "km": 2.97, "min": 5.1, "tf": 1.0}, {"u": "BLK-Max Super Speciality", "v": "Sir Ganga Ram Hospital", "km": 1.14, "min": 2.0, "tf": 1.2}, {"u": "Columbia Asia Hospital", "v": "Fortis Hospital Noida", "km": 8.81, "min": 15.1, "tf": 1.5}, {"u": "Columbia Asia Hospital", "v": "Ghaziabad Old Bus Stand", "km": 0.71, "min": 2.0, "tf": 1.4}, {"u": "Columbia Asia Hospital", "v": "Indirapuram", "km": 7.56, "min": 13.0, "tf": 1.3}, {"u": "Columbia Asia Hospital", "v": "Noida Electronic City", "km": 7.78, "min": 13.3, "tf": 1.3}, {"u": "Connaught Place", "v": "GB Pant Hospital", "km": 2.5, "min": 4.3, "tf": 1.0}, {"u": "Connaught Place", "v": "Gurugram Cyber Hub", "km": 19.63, "min": 33.6, "tf": 1.1}, {"u": "Connaught Place", "v": "Karol Bagh", "km": 3.37, "min": 5.8, "tf": 1.2}, {"u": "Connaught Place", "v": "LNJP Hospital", "km": 2.5, "min": 4.3, "tf": 1.4}, {"u": "Connaught Place", "v": "RML Hospital", "km": 1.54, "min": 2.6, "tf": 1.2}, {"u": "Connaught Place", "v": "Sir Ganga Ram Hospital", "km": 2.75, "min": 4.7, "tf": 1.3}, {"u": "Deen Dayal Upadhyay Hospital", "v": "Dwarka", "km": 7.58, "min": 13.0, "tf": 1.0}, {"u": "Deen Dayal Upadhyay Hospital", "v": "Janakpuri", "km": 2.46, "min": 4.2, "tf": 1.4}, {"u": "Deen Dayal Upadhyay Hospital", "v": "Maharaja Agrasen Hospital", "km": 5.06, "min": 8.7, "tf": 1.1}, {"u": "Deen Dayal Upadhyay Hospital", "v": "Manipal Hospital Dwarka", "km": 6.75, "min": 11.6, "tf": 1.0}, {"u": "Deen Dayal Upadhyay Hospital", "v": "Punjabi Bagh", "km": 4.61, "min": 7.9, "tf": 1.0}, {"u": "Deen Dayal Upadhyay Hospital", "v": "Rajouri Garden", "km": 2.53, "min": 4.3, "tf": 1.0}, {"u": "Deen Dayal Upadhyay Hospital", "v": "Venkateshwar Hospital", "km": 7.98, "min": 13.7, "tf": 1.2}, {"u": "Dwarka", "v": "Gurugram Cyber Hub", "km": 11.56, "min": 19.8, "tf": 1.1}, {"u": "Dwarka", "v": "Janakpuri", "km": 5.26, "min": 9.0, "tf": 1.1}, {"u": "Dwarka", "v": "Manipal Hospital Dwarka", "km": 1.44, "min": 2.5, "tf": 1.1}, {"u": "Dwarka", "v": "Venkateshwar Hospital", "km": 0.41, "min": 2.0, "tf": 1.4}, {"u": "Faridabad Badarpur Border", "v": "Indraprastha Apollo Hospital", "km": 5.88, "min": 10.1, "tf": 1.4}, {"u": "Faridabad Badarpur Border", "v": "Jaypee Hospital Noida", "km": 7.38, "min": 12.7, "tf": 1.5}, {"u": "Faridabad Badarpur Border", "v": "Nehru Place", "km": 8.01, "min": 13.7, "tf": 1.0}, {"u": "Faridabad Badarpur Border", "v": "Okhla", "km": 5.7, "min": 9.8, "tf": 1.5}, {"u": "Faridabad Badarpur Border", "v": "QRG Super Speciality Hospital", "km": 8.27, "min": 14.2, "tf": 1.5}, {"u": "Faridabad Badarpur Border", "v": "Sarvodaya Hospital", "km": 13.0, "min": 22.3, "tf": 1.3}, {"u": "Fortis Flt Lt Rajan Dhall", "v": "Hauz Khas", "km": 4.92, "min": 8.4, "tf": 1.4}, {"u": "Fortis Flt Lt Rajan Dhall", "v": "Max Super Speciality Saket", "km": 5.24, "min": 9.0, "tf": 1.0}, {"u": "Fortis Flt Lt Rajan Dhall", "v": "Saket", "km": 4.7, "min": 8.1, "tf": 1.0}, {"u": "Fortis Flt Lt Rajan Dhall", "v": "Vasant Kunj", "km": 1.03, "min": 2.0, "tf": 1.5}, {"u": "Fortis Hospital Noida", "v": "Ghaziabad Old Bus Stand", "km": 8.67, "min": 14.9, "tf": 1.4}, {"u": "Fortis Hospital Noida", "v": "Indirapuram", "km": 2.34, "min": 4.0, "tf": 1.0}, {"u": "Fortis Hospital Noida", "v": "Noida Electronic City", "km": 1.09, "min": 2.0, "tf": 1.0}, {"u": "Fortis Hospital Noida", "v": "Noida Sec 62", "km": 0.46, "min": 2.0, "tf": 1.5}, {"u": "Fortis Hospital Noida", "v": "Vaishali", "km": 3.85, "min": 6.6, "tf": 1.0}, {"u": "Fortis Hospital Shalimar Bagh", "v": "Karol Bagh", "km": 7.62, "min": 13.1, "tf": 1.0}, {"u": "Fortis Hospital Shalimar Bagh", "v": "Maharaja Agrasen Hospital", "km": 6.09, "min": 10.4, "tf": 1.0}, {"u": "Fortis Hospital Shalimar Bagh", "v": "Punjabi Bagh", "km": 6.54, "min": 11.2, "tf": 1.1}, {"u": "Fortis Hospital Shalimar Bagh", "v": "Rohini", "km": 4.83, "min": 8.3, "tf": 1.1}, {"u": "Fortis Memorial Research Institute", "v": "Gurugram Cyber Hub", "km": 4.34, "min": 7.4, "tf": 1.1}, {"u": "Fortis Memorial Research Institute", "v": "Gurugram IFFCO Chowk", "km": 1.47, "min": 2.5, "tf": 1.5}, {"u": "Fortis Memorial Research Institute", "v": "Medanta The Medicity", "km": 3.64, "min": 6.2, "tf": 1.2}, {"u": "GB Pant Hospital", "v": "LNJP Hospital", "km": 0.17, "min": 2.0, "tf": 1.4}, {"u": "GB Pant Hospital", "v": "RML Hospital", "km": 4.02, "min": 6.9, "tf": 1.1}, {"u": "GB Pant Hospital", "v": "Sir Ganga Ram Hospital", "km": 5.08, "min": 8.7, "tf": 1.4}, {"u": "GIMS Hospital", "v": "Greater Noida Pari Chowk", "km": 1.6, "min": 2.7, "tf": 1.4}, {"u": "GIMS Hospital", "v": "Jaypee Hospital Noida", "km": 14.71, "min": 25.2, "tf": 1.2}, {"u": "GIMS Hospital", "v": "Sharda Hospital", "km": 2.8, "min": 4.8, "tf": 1.1}, {"u": "GIMS Hospital", "v": "Yatharth Super Speciality Noida", "km": 13.71, "min": 23.5, "tf": 1.1}, {"u": "Ghaziabad Old Bus Stand", "v": "Indirapuram", "km": 7.26, "min": 12.4, "tf": 1.2}, {"u": "Ghaziabad Old Bus Stand", "v": "Noida Electronic City", "km": 7.62, "min": 13.1, "tf": 1.5}, {"u": "Ghaziabad Old Bus Stand", "v": "Vaishali", "km": 9.86, "min": 16.9, "tf": 1.4}, {"u": "Greater Noida Pari Chowk", "v": "Jaypee Hospital Noida", "km": 14.95, "min": 25.6, "tf": 1.0}, {"u": "Greater Noida Pari Chowk", "v": "Noida Sec 18", "km": 21.45, "min": 36.8, "tf": 1.3}, {"u": "Greater Noida Pari Chowk", "v": "Sharda Hospital", "km": 2.91, "min": 5.0, "tf": 1.4}, {"u": "Greater Noida Pari Chowk", "v": "Yatharth Super Speciality Noida", "km": 13.72, "min": 23.5, "tf": 1.5}, {"u": "Gurugram Cyber Hub", "v": "Gurugram IFFCO Chowk", "km": 3.18, "min": 5.4, "tf": 1.4}, {"u": "Gurugram Cyber Hub", "v": "Medanta The Medicity", "km": 7.7, "min": 13.2, "tf": 1.4}, {"u": "Gurugram Cyber Hub", "v": "Vasant Kunj", "km": 7.11, "min": 12.2, "tf": 1.5}, {"u": "Gurugram IFFCO Chowk", "v": "Medanta The Medicity", "km": 4.52, "min": 7.7, "tf": 1.5}, {"u": "Hauz Khas", "v": "Max Super Speciality Saket", "km": 2.7, "min": 4.6, "tf": 1.4}, {"u": "Hauz Khas", "v": "Safdarjung Hospital", "km": 2.23, "min": 3.8, "tf": 1.2}, {"u": "Hauz Khas", "v": "Saket", "km": 2.84, "min": 4.9, "tf": 1.1}, {"u": "Hauz Khas", "v": "Vasant Kunj", "km": 5.35, "min": 9.2, "tf": 1.5}, {"u": "Holy Family Hospital", "v": "Indraprastha Apollo Hospital", "km": 2.46, "min": 4.2, "tf": 1.2}, {"u": "Holy Family Hospital", "v": "Kailash Hospital Noida", "km": 5.72, "min": 9.8, "tf": 1.2}, {"u": "Holy Family Hospital", "v": "Nehru Place", "km": 2.67, "min": 4.6, "tf": 1.1}, {"u": "Holy Family Hospital", "v": "Noida Sec 18", "km": 4.98, "min": 8.5, "tf": 1.3}, {"u": "Holy Family Hospital", "v": "Okhla", "km": 2.96, "min": 5.1, "tf": 1.5}, {"u": "Indirapuram", "v": "Max Super Speciality Vaishali", "km": 3.19, "min": 5.5, "tf": 1.0}, {"u": "Indirapuram", "v": "Noida Electronic City", "km": 1.53, "min": 2.6, "tf": 1.4}, {"u": "Indirapuram", "v": "Noida Sec 62", "km": 2.3, "min": 3.9, "tf": 1.2}, {"u": "Indirapuram", "v": "Vaishali", "km": 2.95, "min": 5.1, "tf": 1.4}, {"u": "Indraprastha Apollo Hospital", "v": "Nehru Place", "km": 3.16, "min": 5.4, "tf": 1.0}, {"u": "Indraprastha Apollo Hospital", "v": "Okhla", "km": 1.22, "min": 2.1, "tf": 1.0}, {"u": "Janakpuri", "v": "Manipal Hospital Dwarka", "km": 4.64, "min": 8.0, "tf": 1.1}, {"u": "Janakpuri", "v": "Punjabi Bagh", "km": 6.32, "min": 10.8, "tf": 1.1}, {"u": "Janakpuri", "v": "Rajouri Garden", "km": 4.5, "min": 7.7, "tf": 1.2}, {"u": "Janakpuri", "v": "Venkateshwar Hospital", "km": 5.64, "min": 9.7, "tf": 1.4}, {"u": "Jaypee Hospital Noida", "v": "Kailash Hospital Noida", "km": 7.25, "min": 12.4, "tf": 1.5}, {"u": "Jaypee Hospital Noida", "v": "Noida Sec 18", "km": 7.31, "min": 12.5, "tf": 1.3}, {"u": "Jaypee Hospital Noida", "v": "QRG Super Speciality Hospital", "km": 11.97, "min": 20.5, "tf": 1.4}, {"u": "Jaypee Hospital Noida", "v": "Sarvodaya Hospital", "km": 15.75, "min": 27.0, "tf": 1.3}, {"u": "Jaypee Hospital Noida", "v": "Sharda Hospital", "km": 12.08, "min": 20.7, "tf": 1.1}, {"u": "Jaypee Hospital Noida", "v": "Yatharth Super Speciality Noida", "km": 2.31, "min": 4.0, "tf": 1.0}, {"u": "Kailash Hospital Noida", "v": "Mayur Vihar", "km": 5.16, "min": 8.8, "tf": 1.3}, {"u": "Kailash Hospital Noida", "v": "Metro Hospital Noida", "km": 2.68, "min": 4.6, "tf": 1.5}, {"u": "Kailash Hospital Noida", "v": "Noida Sec 18", "km": 0.77, "min": 2.0, "tf": 1.0}, {"u": "Kailash Hospital Noida", "v": "Yatharth Super Speciality Noida", "km": 7.49, "min": 12.8, "tf": 1.1}, {"u": "Karol Bagh", "v": "Punjabi Bagh", "km": 6.51, "min": 11.2, "tf": 1.5}, {"u": "Karol Bagh", "v": "RML Hospital", "km": 3.06, "min": 5.3, "tf": 1.5}, {"u": "Karol Bagh", "v": "Sir Ganga Ram Hospital", "km": 1.49, "min": 2.6, "tf": 1.1}, {"u": "LNJP Hospital", "v": "RML Hospital", "km": 4.03, "min": 6.9, "tf": 1.2}, {"u": "LNJP Hospital", "v": "Sir Ganga Ram Hospital", "km": 5.03, "min": 8.6, "tf": 1.5}, {"u": "Lajpat Nagar", "v": "Moolchand Hospital", "km": 0.63, "min": 2.0, "tf": 1.3}, {"u": "Lajpat Nagar", "v": "Nehru Place", "km": 2.66, "min": 4.6, "tf": 1.0}, {"u": "Lajpat Nagar", "v": "Noida Sec 18", "km": 8.4, "min": 14.4, "tf": 1.4}, {"u": "Lajpat Nagar", "v": "Safdarjung Hospital", "km": 3.23, "min": 5.5, "tf": 1.0}, {"u": "Maharaja Agrasen Hospital", "v": "Punjabi Bagh", "km": 0.46, "min": 2.0, "tf": 1.4}, {"u": "Maharaja Agrasen Hospital", "v": "Rajouri Garden", "km": 2.54, "min": 4.4, "tf": 1.5}, {"u": "Maharaja Agrasen Hospital", "v": "Rohini", "km": 5.08, "min": 8.7, "tf": 1.4}, {"u": "Manipal Hospital Dwarka", "v": "Venkateshwar Hospital", "km": 1.79, "min": 3.1, "tf": 1.1}, {"u": "Max Super Speciality Patparganj", "v": "Max Super Speciality Vaishali", "km": 3.53, "min": 6.0, "tf": 1.5}, {"u": "Max Super Speciality Patparganj", "v": "Mayur Vihar", "km": 2.55, "min": 4.4, "tf": 1.3}, {"u": "Max Super Speciality Patparganj", "v": "Yashoda Super Speciality Hospital", "km": 2.19, "min": 3.7, "tf": 1.0}, {"u": "Max Super Speciality Saket", "v": "Saket", "km": 0.62, "min": 2.0, "tf": 1.5}, {"u": "Max Super Speciality Saket", "v": "Vasant Kunj", "km": 6.06, "min": 10.4, "tf": 1.3}, {"u": "Max Super Speciality Vaishali", "v": "Vaishali", "km": 0.39, "min": 2.0, "tf": 1.0}, {"u": "Max Super Speciality Vaishali", "v": "Yashoda Super Speciality Hospital", "km": 1.58, "min": 2.7, "tf": 1.4}, {"u": "Mayur Vihar", "v": "Metro Hospital Noida", "km": 3.5, "min": 6.0, "tf": 1.3}, {"u": "Mayur Vihar", "v": "Noida Sec 18", "km": 5.01, "min": 8.6, "tf": 1.2}, {"u": "Mayur Vihar", "v": "Yashoda Super Speciality Hospital", "km": 4.69, "min": 8.0, "tf": 1.4}, {"u": "Metro Hospital Noida", "v": "Noida Sec 18", "km": 3.06, "min": 5.3, "tf": 1.2}, {"u": "Metro Hospital Noida", "v": "Noida Sec 62", "km": 4.04, "min": 6.9, "tf": 1.2}, {"u": "Metro Hospital Noida", "v": "Yatharth Super Speciality Noida", "km": 9.63, "min": 16.5, "tf": 1.2}, {"u": "Moolchand Hospital", "v": "Safdarjung Hospital", "km": 2.64, "min": 4.5, "tf": 1.2}, {"u": "Nehru Place", "v": "Okhla", "km": 2.48, "min": 4.3, "tf": 1.5}, {"u": "Noida Electronic City", "v": "Noida Sec 62", "km": 1.33, "min": 2.3, "tf": 1.2}, {"u": "Noida Electronic City", "v": "Vaishali", "km": 3.85, "min": 6.6, "tf": 1.1}, {"u": "Noida Sec 18", "v": "Yatharth Super Speciality Noida", "km": 7.78, "min": 13.3, "tf": 1.1}, {"u": "Noida Sec 62", "v": "Vaishali", "km": 3.46, "min": 5.9, "tf": 1.4}, {"u": "Punjabi Bagh", "v": "Rajouri Garden", "km": 2.1, "min": 3.6, "tf": 1.2}, {"u": "Punjabi Bagh", "v": "Rohini", "km": 5.4, "min": 9.3, "tf": 1.0}, {"u": "QRG Super Speciality Hospital", "v": "Sarvodaya Hospital", "km": 4.75, "min": 8.1, "tf": 1.4}, {"u": "RML Hospital", "v": "Sir Ganga Ram Hospital", "km": 1.84, "min": 3.2, "tf": 1.5}, {"u": "Rajouri Garden", "v": "Rohini", "km": 7.37, "min": 12.6, "tf": 1.2}, {"u": "Saket", "v": "Vasant Kunj", "km": 5.56, "min": 9.5, "tf": 1.4}, {"u": "Sharda Hospital", "v": "Yatharth Super Speciality Noida", "km": 10.95, "min": 18.8, "tf": 1.3}, {"u": "Vaishali", "v": "Yashoda Super Speciality Hospital", "km": 1.76, "min": 3.0, "tf": 1.3}];
+
+// Client-Side DSA Engine Mirror
+const localEngine = {
+  hospitals: JSON.parse(JSON.stringify(RAW_HOSPITALS)),
+  ambulances: JSON.parse(JSON.stringify(RAW_AMBULANCES)),
+  roads: JSON.parse(JSON.stringify(RAW_ROADS)),
+  criticalHeap: [],
+  normalQueue: [],
+  dispatchStack: [],
+  activeTrips: [],
+  patientSeq: 0,
+  dispatchSeq: 0,
+  adj: {},
+
+  init() {
+    this.adj = {};
+    this.roads.forEach(r => {
+      if (!this.adj[r.u]) this.adj[r.u] = [];
+      if (!this.adj[r.v]) this.adj[r.v] = [];
+      this.adj[r.u].push({ to: r.v, km: r.km, min: r.min, tf: r.tf, blocked: false });
+      this.adj[r.v].push({ to: r.u, km: r.km, min: r.min, tf: r.tf, blocked: false });
+    });
+  },
+
+  registerPatient(p) {
+    p.id = ++this.patientSeq;
+    p.arrival_order = this.patientSeq;
+    p.severity_rank = p.severity === 'Critical' ? 1 : (p.severity === 'High' ? 2 : (p.severity === 'Medium' ? 3 : 4));
+    if (p.severity_rank <= 2) {
+      this.criticalHeap.push(p);
+      this.heapifyUp(this.criticalHeap.length - 1);
+    } else {
+      this.normalQueue.push(p);
+    }
+    return p;
+  },
+
+  heapifyUp(idx) {
+    while (idx > 0) {
+      let p = Math.floor((idx - 1) / 2);
+      if (this.isHigherPriority(this.criticalHeap[idx], this.criticalHeap[p])) {
+        [this.criticalHeap[idx], this.criticalHeap[p]] = [this.criticalHeap[p], this.criticalHeap[idx]];
+        idx = p;
+      } else break;
+    }
+  },
+
+  heapifyDown(idx) {
+    let n = this.criticalHeap.length;
+    while (true) {
+      let best = idx;
+      let l = 2 * idx + 1, r = 2 * idx + 2;
+      if (l < n && this.isHigherPriority(this.criticalHeap[l], this.criticalHeap[best])) best = l;
+      if (r < n && this.isHigherPriority(this.criticalHeap[r], this.criticalHeap[best])) best = r;
+      if (best !== idx) {
+        [this.criticalHeap[idx], this.criticalHeap[best]] = [this.criticalHeap[best], this.criticalHeap[idx]];
+        idx = best;
+      } else break;
+    }
+  },
+
+  isHigherPriority(a, b) {
+    if (a.severity_rank !== b.severity_rank) return a.severity_rank < b.severity_rank;
+    return a.arrival_order < b.arrival_order;
+  },
+
+  extractTopHeap() {
+    if (this.criticalHeap.length === 0) return null;
+    let top = this.criticalHeap[0];
+    let last = this.criticalHeap.pop();
+    if (this.criticalHeap.length > 0) {
+      this.criticalHeap[0] = last;
+      this.heapifyDown(0);
+    }
+    return top;
+  },
+
+  dijkstra(src) {
+    let dist = {}, parent = {}, distKm = {};
+    let pq = [{ node: src, d: 0 }];
+    dist[src] = 0;
+    distKm[src] = 0;
+
+    while (pq.length > 0) {
+      pq.sort((a, b) => a.d - b.d);
+      let curr = pq.shift();
+      let u = curr.node;
+      if (curr.d > dist[u]) continue;
+
+      let edges = this.adj[u] || [];
+      for (let e of edges) {
+        if (e.blocked) continue;
+        let w = e.min * e.tf;
+        let newD = dist[u] + w;
+        if (dist[e.to] === undefined || newD < dist[e.to]) {
+          dist[e.to] = newD;
+          parent[e.to] = u;
+          distKm[e.to] = distKm[u] + e.km;
+          pq.push({ node: e.to, d: newD });
+        }
+      }
+    }
+    return { dist, parent, distKm };
+  },
+
+  getRoute(src, dest) {
+    let { dist, parent, distKm } = this.dijkstra(src);
+    if (dist[dest] === undefined) return { found: false, time: 0, km: 0, path: [] };
+    let path = [];
+    let curr = dest;
+    while (curr) {
+      path.push(curr);
+      curr = parent[curr];
+    }
+    path.reverse();
+    return { found: true, time: dist[dest], km: distKm[dest], path };
+  },
+
+  checkDFS() {
+    let visited = new Set();
+    let components = 0;
+    let nodes = Object.keys(this.adj);
+    const dfs = (u) => {
+      visited.add(u);
+      (this.adj[u] || []).forEach(e => {
+        if (!e.blocked && !visited.has(e.to)) dfs(e.to);
+      });
+    };
+    nodes.forEach(n => {
+      if (!visited.has(n)) {
+        components++;
+        dfs(n);
+      }
+    });
+    return components;
+  },
+
+  processNext() {
+    this.updateActiveTrips();
+    let patient = this.extractTopHeap() || this.normalQueue.shift();
+    if (!patient) return { success: false, message: "No pending patients in triage queue." };
+
+    let prefType = patient.severity_rank <= 2 || patient.emergency_type === 'cardiac' || patient.emergency_type === 'stroke' ? 'ALS' : 'BLS';
+    if (patient.emergency_type === 'pregnancy') prefType = 'neonatal';
+
+    let { dist } = this.dijkstra(patient.pickup_loc);
+    let bestAmb = null, bestTime = 1e9, foundPref = false;
+
+    for (let a of this.ambulances) {
+      if (a.status !== 'available') continue;
+      let t = dist[a.base];
+      if (t === undefined) continue;
+      let isPref = (a.type === prefType);
+      if (isPref && (!foundPref || t < bestTime)) {
+        bestAmb = a; bestTime = t; foundPref = true;
+      } else if (!foundPref && t < bestTime) {
+        bestAmb = a; bestTime = t;
+      }
+    }
+
+    if (!bestAmb) {
+      if (patient.severity_rank <= 2) { this.criticalHeap.push(patient); this.heapifyUp(this.criticalHeap.length - 1); }
+      else this.normalQueue.push(patient);
+      return { success: false, message: "All ambulances are currently busy." };
+    }
+
+    let candidates = [];
+    let needed = patient.emergency_type;
+    if (needed === 'stroke') needed = 'neuro';
+    if (needed === 'pregnancy') needed = 'maternity';
+    if (needed === 'breathing') needed = 'cardiac';
+
+    this.hospitals.forEach(h => {
+      if (!h.has_emergency || h.free_beds <= 0) return;
+      if (patient.severity_rank === 1 && h.icu_free <= 0) return;
+      if (needed === 'general' || h.specialties.includes(needed)) {
+        let t = dist[h.name];
+        if (t !== undefined) candidates.push({ h, t, specialty: 'Exact Specialty' });
+      }
+    });
+
+    if (candidates.length === 0) {
+      this.hospitals.forEach(h => {
+        if (h.has_emergency && h.free_beds > 0 && dist[h.name] !== undefined) {
+          candidates.push({ h, t: dist[h.name], specialty: 'General Emergency (Relaxed)' });
+        }
+      });
+    }
+
+    if (candidates.length === 0) {
+      return { success: false, message: "No hospital with open beds is currently reachable." };
+    }
+
+    // Merge sort candidate ranking
+    candidates.sort((a, b) => a.t !== b.t ? a.t - b.t : b.h.free_beds - a.h.free_beds);
+    let chosen = candidates[0];
+    let alts = candidates.slice(1, 4).map(c => ({ name: c.h.name, travel_time: c.t, free_beds: c.h.free_beds, specialty: c.specialty }));
+
+    let r1 = this.getRoute(bestAmb.base, patient.pickup_loc);
+    let r2 = this.getRoute(patient.pickup_loc, chosen.h.name);
+
+    bestAmb.status = 'busy';
+    chosen.h.free_beds--;
+    if (patient.severity_rank === 1) chosen.h.icu_free--;
+
+    let totalEta = r1.time + r2.time;
+    this.activeTrips.push({ ambId: bestAmb.id, hId: chosen.h.id, returnTime: Date.now() + Math.max(60000, totalEta * 10000) });
+
+    let record = {
+      dispatch_id: ++this.dispatchSeq,
+      patient_name: patient.name,
+      ambulance_id: bestAmb.id,
+      vehicle_no: bestAmb.vehicle_no,
+      driver_name: bestAmb.driver_name,
+      driver_phone: bestAmb.driver_phone,
+      hospital_name: chosen.h.name,
+      hospital_id: chosen.h.id,
+      route1_time: r1.time,
+      route1_km: r1.km,
+      route2_time: r2.time,
+      route2_km: r2.km,
+      total_eta: totalEta,
+      route1_path: r1.path,
+      route2_path: r2.path,
+      rationale: `Selected ${bestAmb.type} unit ${bestAmb.vehicle_no} (ETA ${Math.round(r1.time)} min); assigned to ${chosen.h.name} (${chosen.specialty}, ${chosen.h.free_beds} beds left).`,
+      is_critical: patient.severity_rank === 1
+    };
+
+    this.dispatchStack.push(record);
+    return { success: true, ...record, alternatives: alts };
+  },
+
+  updateActiveTrips() {
+    let now = Date.now();
+    let rem = [];
+    this.activeTrips.forEach(tr => {
+      if (now >= tr.returnTime) {
+        let amb = this.ambulances.find(a => a.id === tr.ambId);
+        if (amb) amb.status = 'available';
+      } else {
+        rem.push(tr);
+      }
+    });
+    this.activeTrips = rem;
+  },
+
+  undo() {
+    if (this.dispatchStack.length === 0) return { success: false, message: "Dispatch history is empty." };
+    let rec = this.dispatchStack.pop();
+    let amb = this.ambulances.find(a => a.id === rec.ambulance_id);
+    if (amb) amb.status = 'available';
+    let hosp = this.hospitals.find(h => h.id === rec.hospital_id);
+    if (hosp) {
+      hosp.free_beds++;
+      if (rec.is_critical) hosp.icu_free++;
+    }
+    this.activeTrips = this.activeTrips.filter(t => t.ambId !== rec.ambulance_id);
+    return { success: true, message: `Rolled back dispatch #${rec.dispatch_id} for ${rec.patient_name}` };
+  },
+
+  toggleRoad(u, v) {
+    let isBlocked = false;
+    (this.adj[u] || []).forEach(e => { if (e.to === v) { e.blocked = !e.blocked; isBlocked = e.blocked; } });
+    (this.adj[v] || []).forEach(e => { if (e.to === u) { e.blocked = !e.blocked; } });
+    let comps = this.checkDFS();
+    return { isBlocked, comps, message: `Road between ${u} and ${v} ${isBlocked ? 'blocked' : 'unblocked'}.` };
+  },
+
+  getStatus() {
+    this.updateActiveTrips();
+    let avail = this.ambulances.filter(a => a.status === 'available').length;
+    let busyUnits = this.activeTrips.map(tr => {
+      let amb = this.ambulances.find(a => a.id === tr.ambId);
+      let hosp = this.hospitals.find(h => h.id === tr.hId);
+      return { vehicle_no: amb.vehicle_no, type: amb.type, destination: hosp.name };
+    });
+    let waiting = [
+      ...this.criticalHeap.map(p => ({ name: p.name, type: p.emergency_type, severity: p.severity })),
+      ...this.normalQueue.map(p => ({ name: p.name, type: p.emergency_type, severity: p.severity }))
+    ];
+    return {
+      total_ambulances: this.ambulances.length,
+      available_ambulances: avail,
+      busy_ambulances: this.ambulances.length - avail,
+      pending_critical: this.criticalHeap.length,
+      pending_normal: this.normalQueue.length,
+      components: this.checkDFS(),
+      busy_units: busyUnits,
+      waiting_patients: waiting
+    };
+  }
+};
+
+localEngine.init();
+
+// --- CONTROLLER LOGIC (Dual Mode: C++ Localhost vs Cloud/Vercel) ---
+let isLocalCppMode = false;
+const API = window.location.origin.startsWith('http') && window.location.port === '8080' ? '' : 'http://localhost:8080';
+
+async function checkBackend() {
+  try {
+    const res = await fetch(API + '/status');
+    if (res.ok) {
+      isLocalCppMode = true;
+      document.getElementById('engine-mode').innerText = 'C++ Backend Connected (localhost:8080)';
+      document.getElementById('engine-mode').className = 'mode-pill b-hosp';
+      return;
+    }
+  } catch(e) {}
+  isLocalCppMode = false;
+  document.getElementById('engine-mode').innerText = 'Online Live Mode (Cloud/Vercel)';
+  document.getElementById('engine-mode').className = 'mode-pill b-amb';
+}
+
+async function loadStatus() {
+  if (isLocalCppMode) {
+    try {
+      const res = await fetch(API + '/status');
+      const d = await res.json();
+      renderStatus(d);
+      loadHistory();
+      return;
+    } catch (e) {
+      isLocalCppMode = false;
+      document.getElementById('engine-mode').innerText = 'Online Live Mode (Cloud/Vercel)';
+      document.getElementById('engine-mode').className = 'mode-pill b-amb';
+    }
+  }
+  renderStatus(localEngine.getStatus());
+  renderLocalHistory();
+}
+
+function renderStatus(d) {
+  document.getElementById('st-avail').innerText = `${d.available_ambulances} / ${d.total_ambulances}`;
+  document.getElementById('st-busy').innerText = d.busy_ambulances;
+  document.getElementById('st-heap').innerText = d.pending_critical;
+  document.getElementById('st-queue').innerText = d.pending_normal;
+  document.getElementById('st-comps').innerText = d.components === 1 ? 'Connected' : `Alert: ${d.components} Isolated Zones`;
+
+  const bList = document.getElementById('busy-list');
+  if ((d.busy_units || []).length === 0) {
+    bList.innerHTML = '<span style="color:#888; font-size:11px;">All units currently available.</span>';
+  } else {
+    bList.innerHTML = d.busy_units.map(u => `<div class="active-unit"><strong>${u.vehicle_no}</strong> (${u.type}) &rarr; ${u.destination} <span class="badge b-crit" style="float:right;">In Transit</span></div>`).join('');
+  }
+
+  const qBox = document.getElementById('queue-box');
+  const qList = document.getElementById('queue-list');
+  if ((d.waiting_patients || []).length > 0) {
+    qBox.style.display = 'block';
+    qList.innerHTML = d.waiting_patients.map(p => 
+      `<div style="font-size:11px; padding:3px 0; border-bottom:1px solid #F0F0F0;">
+        <strong>${p.name}</strong> (${p.type}) &bull; <span class="badge ${p.severity==='Critical'?'b-crit':'b-amb'}">${p.severity}</span>
+      </div>`
+    ).join('');
+  } else {
+    qBox.style.display = 'none';
+  }
+}
+
+async function loadHistory() {
+  try {
+    const res = await fetch(API + '/history');
+    const hist = await res.json();
+    renderHistoryItems(hist);
+  } catch(e) {
+    renderLocalHistory();
+  }
+}
+
+function renderLocalHistory() {
+  const items = localEngine.dispatchStack.map(h => ({
+    id: h.dispatch_id,
+    patient: h.patient_name,
+    ambulance: h.vehicle_no,
+    driver: h.driver_name,
+    hospital: h.hospital_name,
+    eta: h.total_eta
+  }));
+  renderHistoryItems(items);
+}
+
+function renderHistoryItems(hist) {
+  const list = document.getElementById('hist-list');
+  list.innerHTML = hist.length === 0 ? '<div style="color:#888;font-size:11px;">No dispatches yet.</div>' : '';
+  for (let i = hist.length - 1; i >= 0; i--) {
+    const h = hist[i];
+    list.innerHTML += `<div class="hist-item"><strong>#${h.id}</strong> ${h.patient} &rarr; ${h.ambulance} (${h.driver}) &rarr; ${h.hospital} (${h.eta.toFixed(1)}m)</div>`;
+  }
+}
+
+function renderDispatchResult(data) {
+  document.getElementById('no-res').style.display = 'none';
+  document.getElementById('res-box').style.display = 'block';
+  document.getElementById('r-patient').innerText = `${data.patient_name} (#${data.dispatch_id})`;
+  document.getElementById('r-badge').innerText = 'Dispatched';
+  document.getElementById('r-badge').className = 'badge b-amb';
+  document.getElementById('r-eta').innerText = data.total_eta.toFixed(1);
+
+  document.getElementById('c-amb-base').innerText = data.route1_path[0] || 'Base';
+  document.getElementById('c-amb-plate').innerText = data.vehicle_no;
+  document.getElementById('c-leg1').innerText = `${data.route1_time.toFixed(1)}m (${data.route1_km.toFixed(1)}km)`;
+  document.getElementById('c-pickup').innerText = data.route2_path[0] || 'Pickup';
+  document.getElementById('c-leg2').innerText = `${data.route2_time.toFixed(1)}m (${data.route2_km.toFixed(1)}km)`;
+  document.getElementById('c-hospital').innerText = data.hospital_name;
+  document.getElementById('c-beds-left').innerText = 'Assigned Bed';
+
+  document.getElementById('r-amb-info').innerText = `Vehicle: ${data.vehicle_no} | Driver: ${data.driver_name} (${data.driver_phone})`;
+  document.getElementById('r1-path').innerText = data.route1_path.join(' -> ');
+  document.getElementById('r1-time').innerText = data.route1_time.toFixed(1);
+  document.getElementById('r1-dist').innerText = data.route1_km.toFixed(1);
+  document.getElementById('r-hosp-info').innerText = `Hospital: ${data.hospital_name}`;
+  document.getElementById('r2-path').innerText = data.route2_path.join(' -> ');
+  document.getElementById('r2-time').innerText = data.route2_time.toFixed(1);
+  document.getElementById('r2-dist').innerText = data.route2_km.toFixed(1);
+  document.getElementById('r-why').innerText = data.rationale;
+
+  const altsList = document.getElementById('r-alts');
+  altsList.innerHTML = '';
+  (data.alternatives || []).forEach(a => {
+    altsList.innerHTML += `<li>${a.name} - ETA: ${a.travel_time.toFixed(1)} min, Beds: ${a.free_beds} (${a.specialty})</li>`;
+  });
+}
+
+function getFormData() {
+  return {
+    name: document.getElementById('p-name').value,
+    age: parseInt(document.getElementById('p-age').value),
+    gender: document.getElementById('p-gender').value,
+    location: document.getElementById('p-loc').value,
+    emergency_type: document.getElementById('p-type').value,
+    severity: document.getElementById('p-sev').value
+  };
+}
+
+async function enqueuePatient() {
+  const payload = getFormData();
+  if (isLocalCppMode) {
+    try {
+      const res = await fetch(API + '/enqueue', { method:'POST', body: JSON.stringify(payload) });
+      const data = await res.json();
+      alert(data.message || 'Patient added to waiting queue!');
+      loadStatus();
+      return;
+    } catch (e) {}
+  }
+  localEngine.registerPatient(payload);
+  alert(`Patient ${payload.name} added to waiting queue (${payload.severity}).`);
+  loadStatus();
+}
+
+async function dispatchNext() {
+  if (isLocalCppMode) {
+    try {
+      const res = await fetch(API + '/dispatch-next', { method:'POST' });
+      const data = await res.json();
+      if (data.success) {
+        renderDispatchResult(data);
+      } else {
+        alert(data.message || 'No pending patients in triage queues!');
+      }
+      loadStatus();
+      return;
+    } catch(e) {}
+  }
+  let res = localEngine.processNext();
+  if (res.success) {
+    renderDispatchResult(res);
+  } else {
+    alert(res.message);
+  }
+  loadStatus();
+}
+
+async function submitPatient(e) {
+  e.preventDefault();
+  const payload = getFormData();
+  if (isLocalCppMode) {
+    try {
+      const res = await fetch(API + '/patient', { method:'POST', body: JSON.stringify(payload) });
+      const data = await res.json();
+      if (data.success) {
+        renderDispatchResult(data);
+      } else {
+        alert(data.message || 'Dispatch failed');
+      }
+      loadStatus();
+      return;
+    } catch(e) {}
+  }
+  localEngine.registerPatient(payload);
+  let res = localEngine.processNext();
+  if (res.success) {
+    renderDispatchResult(res);
+  } else {
+    alert(res.message);
+  }
+  loadStatus();
+}
+
+async function undoDispatch() {
+  if (isLocalCppMode) {
+    try {
+      const res = await fetch(API + '/undo', { method:'POST' });
+      const d = await res.json();
+      alert(d.message);
+      loadStatus();
+      return;
+    } catch(e) {}
+  }
+  let d = localEngine.undo();
+  alert(d.message);
+  loadStatus();
+}
+
+async function toggleRoad() {
+  const val = document.getElementById('blk-road').value.split('|');
+  if (isLocalCppMode) {
+    try {
+      const res = await fetch(API + '/block-road', { method:'POST', body: JSON.stringify({ from: val[0], to: val[1] }) });
+      const d = await res.json();
+      document.getElementById('road-msg').innerText = d.message;
+      loadStatus();
+      return;
+    } catch(e) {}
+  }
+  let d = localEngine.toggleRoad(val[0], val[1]);
+  document.getElementById('road-msg').innerText = `${d.message} Components: ${d.comps}`;
+  loadStatus();
+}
+
+window.onload = async () => {
+  await checkBackend();
+  loadStatus();
+  setInterval(loadStatus, 2500);
+};
+</script>
+</body>
+</html>

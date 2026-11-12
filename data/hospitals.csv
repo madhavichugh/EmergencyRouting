@@ -1,0 +1,37 @@
+# Hospital names and locations are approximate real-world data; beds, ambulances and drivers are simulated.
+id,name,area,latitude,longitude,total_beds,free_beds,icu_total,icu_free,specialties,has_emergency
+1,AIIMS Delhi,Ansari Nagar,28.5672,77.2100,2400,48,200,6,cardiac|trauma|neuro|burns|maternity|general,1
+2,Safdarjung Hospital,Ansari Nagar,28.5685,77.2070,1800,62,150,8,cardiac|trauma|neuro|burns|maternity|general,1
+3,RML Hospital,Connaught Place,28.6258,77.2023,1400,35,120,4,cardiac|trauma|neuro|general,1
+4,LNJP Hospital,Delhi Gate,28.6385,77.2410,2000,70,160,12,trauma|burns|maternity|general,1
+5,GB Pant Hospital,Delhi Gate,28.6370,77.2415,700,22,90,3,cardiac|neuro|general,1
+6,Sir Ganga Ram Hospital,Rajinder Nagar,28.6380,77.1895,675,40,110,9,cardiac|neuro|maternity|general,1
+7,Max Super Speciality Saket,Saket,28.5275,77.2120,530,28,85,5,cardiac|trauma|neuro|maternity|general,1
+8,Max Super Speciality Patparganj,Patparganj,28.6290,77.3075,400,24,70,4,cardiac|neuro|general,1
+9,Fortis Flt Lt Rajan Dhall,Vasant Kunj,28.5245,77.1585,200,15,40,3,cardiac|trauma|general,1
+10,Fortis Hospital Shalimar Bagh,Shalimar Bagh,28.7160,77.1645,260,18,50,4,cardiac|neuro|maternity|general,1
+11,Indraprastha Apollo Hospital,Sarita Vihar,28.5410,77.2840,710,45,120,10,cardiac|trauma|neuro|maternity|general,1
+12,BLK-Max Super Speciality,Karol Bagh,28.6440,77.1800,650,32,100,7,cardiac|neuro|trauma|general,1
+13,Moolchand Hospital,Lajpat Nagar,28.5680,77.2340,300,20,50,5,cardiac|maternity|general,1
+14,Holy Family Hospital,Okhla,28.5620,77.2760,345,22,55,4,cardiac|maternity|general,1
+15,Venkateshwar Hospital,Dwarka,28.5910,77.0420,325,26,60,5,cardiac|trauma|neuro|general,1
+16,Manipal Hospital Dwarka,Dwarka,28.5880,77.0600,380,30,75,6,cardiac|trauma|neuro|maternity|general,1
+17,Maharaja Agrasen Hospital,Punjabi Bagh,28.6710,77.1290,400,25,70,4,trauma|cardiac|general,1
+18,Deen Dayal Upadhyay Hospital,Hari Nagar,28.6280,77.1120,640,38,80,5,trauma|maternity|burns|general,1
+19,Medanta The Medicity,Sector 38 Gurugram,28.4390,77.0430,1250,80,250,18,cardiac|trauma|neuro|burns|maternity|general,1
+20,Artemis Hospital,Sector 51 Gurugram,28.4350,77.0780,400,35,75,7,cardiac|neuro|trauma|maternity|general,1
+21,Fortis Memorial Research Institute,Sector 44 Gurugram,28.4590,77.0725,300,22,65,4,cardiac|trauma|neuro|general,1
+22,Max Super Speciality Vaishali,Vaishali,28.6460,77.3380,370,28,65,5,cardiac|neuro|trauma|maternity|general,1
+23,Yatharth Super Speciality Noida,Sector 110 Noida,28.5280,77.3890,300,20,55,3,cardiac|trauma|general,1
+24,Fortis Hospital Noida,Sector 62 Noida,28.6190,77.3685,200,18,45,4,cardiac|neuro|trauma|general,1
+25,Jaypee Hospital Noida,Sector 128 Noida,28.5170,77.3690,500,42,90,8,cardiac|trauma|neuro|maternity|general,1
+26,Kailash Hospital Noida,Sector 27 Noida,28.5740,77.3330,250,16,45,3,cardiac|trauma|general,1
+27,Metro Hospital Noida,Sector 11 Noida,28.5980,77.3310,315,24,60,5,cardiac|neuro|general,1
+28,Sharda Hospital,Knowledge Park Greater Noida,28.4730,77.4820,900,65,140,12,cardiac|trauma|maternity|burns|general,1
+29,GIMS Hospital,Greater Noida,28.4550,77.5020,500,45,80,8,trauma|maternity|burns|general,1
+30,Columbia Asia Hospital,Ghaziabad,28.6650,77.4420,100,8,25,2,cardiac|general,1
+31,Sarvodaya Hospital,Sector 8 Faridabad,28.3780,77.3380,450,34,80,6,cardiac|trauma|neuro|maternity|general,1
+32,Asian Institute of Medical Sciences,Sector 21A Faridabad,28.4110,77.2990,350,26,65,5,cardiac|trauma|neuro|general,1
+33,QRG Super Speciality Hospital,Sector 16 Faridabad,28.4180,77.3210,400,30,75,6,cardiac|trauma|maternity|general,1
+34,Apollo Spectra Hospital,Kailash Colony,28.5530,77.2430,100,12,20,2,general|maternity,1
+35,Yashoda Super Speciality Hospital,Kaushambi,28.6440,77.3220,300,22,50,4,cardiac|trauma|neuro|burns|general,1

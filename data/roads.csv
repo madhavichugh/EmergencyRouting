@@ -1,0 +1,163 @@
+# Hospital names and locations are approximate real-world data; beds, ambulances and drivers are simulated.
+from,to,distance_km,travel_min,traffic_factor
+AIIMS Delhi,Connaught Place,7.18,12.3,1.5
+AIIMS Delhi,Hauz Khas,2.2,3.8,1.1
+AIIMS Delhi,Lajpat Nagar,2.95,5.1,1.3
+AIIMS Delhi,Max Super Speciality Saket,4.42,7.6,1.2
+AIIMS Delhi,Moolchand Hospital,2.35,4.0,1.2
+AIIMS Delhi,Safdarjung Hospital,0.33,2.0,1.0
+AIIMS Delhi,Saket,4.76,8.2,1.2
+Anand Vihar,Max Super Speciality Patparganj,2.16,3.7,1.0
+Anand Vihar,Max Super Speciality Vaishali,2.15,3.7,1.0
+Anand Vihar,Mayur Vihar,4.71,8.1,1.4
+Anand Vihar,Vaishali,2.38,4.1,1.3
+Anand Vihar,Yashoda Super Speciality Hospital,0.67,2.0,1.4
+Apollo Spectra Hospital,Holy Family Hospital,3.37,5.8,1.1
+Apollo Spectra Hospital,Indraprastha Apollo Hospital,4.22,7.2,1.4
+Apollo Spectra Hospital,Lajpat Nagar,1.91,3.3,1.0
+Apollo Spectra Hospital,Max Super Speciality Saket,4.15,7.1,1.2
+Apollo Spectra Hospital,Moolchand Hospital,1.89,3.2,1.2
+Apollo Spectra Hospital,Nehru Place,1.07,2.0,1.3
+Apollo Spectra Hospital,Okhla,3.53,6.1,1.0
+Artemis Hospital,Fortis Memorial Research Institute,2.72,4.7,1.3
+Artemis Hospital,Gurugram Cyber Hub,6.78,11.6,1.2
+Artemis Hospital,Gurugram IFFCO Chowk,4.19,7.2,1.3
+Artemis Hospital,Medanta The Medicity,3.45,5.9,1.4
+Asian Institute of Medical Sciences,Faridabad Badarpur Border,8.78,15.1,1.3
+Asian Institute of Medical Sciences,Jaypee Hospital Noida,13.63,23.4,1.2
+Asian Institute of Medical Sciences,QRG Super Speciality Hospital,2.29,3.9,1.1
+Asian Institute of Medical Sciences,Sarvodaya Hospital,5.29,9.1,1.3
+BLK-Max Super Speciality,Connaught Place,3.84,6.6,1.2
+BLK-Max Super Speciality,Karol Bagh,1.33,2.3,1.0
+BLK-Max Super Speciality,RML Hospital,2.97,5.1,1.0
+BLK-Max Super Speciality,Sir Ganga Ram Hospital,1.14,2.0,1.2
+Columbia Asia Hospital,Fortis Hospital Noida,8.81,15.1,1.5
+Columbia Asia Hospital,Ghaziabad Old Bus Stand,0.71,2.0,1.4
+Columbia Asia Hospital,Indirapuram,7.56,13.0,1.3
+Columbia Asia Hospital,Noida Electronic City,7.78,13.3,1.3
+Connaught Place,GB Pant Hospital,2.5,4.3,1.0
+Connaught Place,Gurugram Cyber Hub,19.63,33.6,1.1
+Connaught Place,Karol Bagh,3.37,5.8,1.2
+Connaught Place,LNJP Hospital,2.5,4.3,1.4
+Connaught Place,RML Hospital,1.54,2.6,1.2
+Connaught Place,Sir Ganga Ram Hospital,2.75,4.7,1.3
+Deen Dayal Upadhyay Hospital,Dwarka,7.58,13.0,1.0
+Deen Dayal Upadhyay Hospital,Janakpuri,2.46,4.2,1.4
+Deen Dayal Upadhyay Hospital,Maharaja Agrasen Hospital,5.06,8.7,1.1
+Deen Dayal Upadhyay Hospital,Manipal Hospital Dwarka,6.75,11.6,1.0
+Deen Dayal Upadhyay Hospital,Punjabi Bagh,4.61,7.9,1.0
+Deen Dayal Upadhyay Hospital,Rajouri Garden,2.53,4.3,1.0
+Deen Dayal Upadhyay Hospital,Venkateshwar Hospital,7.98,13.7,1.2
+Dwarka,Gurugram Cyber Hub,11.56,19.8,1.1
+Dwarka,Janakpuri,5.26,9.0,1.1
+Dwarka,Manipal Hospital Dwarka,1.44,2.5,1.1
+Dwarka,Venkateshwar Hospital,0.41,2.0,1.4
+Faridabad Badarpur Border,Indraprastha Apollo Hospital,5.88,10.1,1.4
+Faridabad Badarpur Border,Jaypee Hospital Noida,7.38,12.7,1.5
+Faridabad Badarpur Border,Nehru Place,8.01,13.7,1.0
+Faridabad Badarpur Border,Okhla,5.7,9.8,1.5
+Faridabad Badarpur Border,QRG Super Speciality Hospital,8.27,14.2,1.5
+Faridabad Badarpur Border,Sarvodaya Hospital,13.0,22.3,1.3
+Fortis Flt Lt Rajan Dhall,Hauz Khas,4.92,8.4,1.4
+Fortis Flt Lt Rajan Dhall,Max Super Speciality Saket,5.24,9.0,1.0
+Fortis Flt Lt Rajan Dhall,Saket,4.7,8.1,1.0
+Fortis Flt Lt Rajan Dhall,Vasant Kunj,1.03,2.0,1.5
+Fortis Hospital Noida,Ghaziabad Old Bus Stand,8.67,14.9,1.4
+Fortis Hospital Noida,Indirapuram,2.34,4.0,1.0
+Fortis Hospital Noida,Noida Electronic City,1.09,2.0,1.0
+Fortis Hospital Noida,Noida Sec 62,0.46,2.0,1.5
+Fortis Hospital Noida,Vaishali,3.85,6.6,1.0
+Fortis Hospital Shalimar Bagh,Karol Bagh,7.62,13.1,1.0
+Fortis Hospital Shalimar Bagh,Maharaja Agrasen Hospital,6.09,10.4,1.0
+Fortis Hospital Shalimar Bagh,Punjabi Bagh,6.54,11.2,1.1
+Fortis Hospital Shalimar Bagh,Rohini,4.83,8.3,1.1
+Fortis Memorial Research Institute,Gurugram Cyber Hub,4.34,7.4,1.1
+Fortis Memorial Research Institute,Gurugram IFFCO Chowk,1.47,2.5,1.5
+Fortis Memorial Research Institute,Medanta The Medicity,3.64,6.2,1.2
+GB Pant Hospital,LNJP Hospital,0.17,2.0,1.4
+GB Pant Hospital,RML Hospital,4.02,6.9,1.1
+GB Pant Hospital,Sir Ganga Ram Hospital,5.08,8.7,1.4
+GIMS Hospital,Greater Noida Pari Chowk,1.6,2.7,1.4
+GIMS Hospital,Jaypee Hospital Noida,14.71,25.2,1.2
+GIMS Hospital,Sharda Hospital,2.8,4.8,1.1
+GIMS Hospital,Yatharth Super Speciality Noida,13.71,23.5,1.1
+Ghaziabad Old Bus Stand,Indirapuram,7.26,12.4,1.2
+Ghaziabad Old Bus Stand,Noida Electronic City,7.62,13.1,1.5
+Ghaziabad Old Bus Stand,Vaishali,9.86,16.9,1.4
+Greater Noida Pari Chowk,Jaypee Hospital Noida,14.95,25.6,1.0
+Greater Noida Pari Chowk,Noida Sec 18,21.45,36.8,1.3
+Greater Noida Pari Chowk,Sharda Hospital,2.91,5.0,1.4
+Greater Noida Pari Chowk,Yatharth Super Speciality Noida,13.72,23.5,1.5
+Gurugram Cyber Hub,Gurugram IFFCO Chowk,3.18,5.4,1.4
+Gurugram Cyber Hub,Medanta The Medicity,7.7,13.2,1.4
+Gurugram Cyber Hub,Vasant Kunj,7.11,12.2,1.5
+Gurugram IFFCO Chowk,Medanta The Medicity,4.52,7.7,1.5
+Hauz Khas,Max Super Speciality Saket,2.7,4.6,1.4
+Hauz Khas,Safdarjung Hospital,2.23,3.8,1.2
+Hauz Khas,Saket,2.84,4.9,1.1
+Hauz Khas,Vasant Kunj,5.35,9.2,1.5
+Holy Family Hospital,Indraprastha Apollo Hospital,2.46,4.2,1.2
+Holy Family Hospital,Kailash Hospital Noida,5.72,9.8,1.2
+Holy Family Hospital,Nehru Place,2.67,4.6,1.1
+Holy Family Hospital,Noida Sec 18,4.98,8.5,1.3
+Holy Family Hospital,Okhla,2.96,5.1,1.5
+Indirapuram,Max Super Speciality Vaishali,3.19,5.5,1.0
+Indirapuram,Noida Electronic City,1.53,2.6,1.4
+Indirapuram,Noida Sec 62,2.3,3.9,1.2
+Indirapuram,Vaishali,2.95,5.1,1.4
+Indraprastha Apollo Hospital,Nehru Place,3.16,5.4,1.0
+Indraprastha Apollo Hospital,Okhla,1.22,2.1,1.0
+Janakpuri,Manipal Hospital Dwarka,4.64,8.0,1.1
+Janakpuri,Punjabi Bagh,6.32,10.8,1.1
+Janakpuri,Rajouri Garden,4.5,7.7,1.2
+Janakpuri,Venkateshwar Hospital,5.64,9.7,1.4
+Jaypee Hospital Noida,Kailash Hospital Noida,7.25,12.4,1.5
+Jaypee Hospital Noida,Noida Sec 18,7.31,12.5,1.3
+Jaypee Hospital Noida,QRG Super Speciality Hospital,11.97,20.5,1.4
+Jaypee Hospital Noida,Sarvodaya Hospital,15.75,27.0,1.3
+Jaypee Hospital Noida,Sharda Hospital,12.08,20.7,1.1
+Jaypee Hospital Noida,Yatharth Super Speciality Noida,2.31,4.0,1.0
+Kailash Hospital Noida,Mayur Vihar,5.16,8.8,1.3
+Kailash Hospital Noida,Metro Hospital Noida,2.68,4.6,1.5
+Kailash Hospital Noida,Noida Sec 18,0.77,2.0,1.0
+Kailash Hospital Noida,Yatharth Super Speciality Noida,7.49,12.8,1.1
+Karol Bagh,Punjabi Bagh,6.51,11.2,1.5
+Karol Bagh,RML Hospital,3.06,5.3,1.5
+Karol Bagh,Sir Ganga Ram Hospital,1.49,2.6,1.1
+LNJP Hospital,RML Hospital,4.03,6.9,1.2
+LNJP Hospital,Sir Ganga Ram Hospital,5.03,8.6,1.5
+Lajpat Nagar,Moolchand Hospital,0.63,2.0,1.3
+Lajpat Nagar,Nehru Place,2.66,4.6,1.0
+Lajpat Nagar,Noida Sec 18,8.4,14.4,1.4
+Lajpat Nagar,Safdarjung Hospital,3.23,5.5,1.0
+Maharaja Agrasen Hospital,Punjabi Bagh,0.46,2.0,1.4
+Maharaja Agrasen Hospital,Rajouri Garden,2.54,4.4,1.5
+Maharaja Agrasen Hospital,Rohini,5.08,8.7,1.4
+Manipal Hospital Dwarka,Venkateshwar Hospital,1.79,3.1,1.1
+Max Super Speciality Patparganj,Max Super Speciality Vaishali,3.53,6.0,1.5
+Max Super Speciality Patparganj,Mayur Vihar,2.55,4.4,1.3
+Max Super Speciality Patparganj,Yashoda Super Speciality Hospital,2.19,3.7,1.0
+Max Super Speciality Saket,Saket,0.62,2.0,1.5
+Max Super Speciality Saket,Vasant Kunj,6.06,10.4,1.3
+Max Super Speciality Vaishali,Vaishali,0.39,2.0,1.0
+Max Super Speciality Vaishali,Yashoda Super Speciality Hospital,1.58,2.7,1.4
+Mayur Vihar,Metro Hospital Noida,3.5,6.0,1.3
+Mayur Vihar,Noida Sec 18,5.01,8.6,1.2
+Mayur Vihar,Yashoda Super Speciality Hospital,4.69,8.0,1.4
+Metro Hospital Noida,Noida Sec 18,3.06,5.3,1.2
+Metro Hospital Noida,Noida Sec 62,4.04,6.9,1.2
+Metro Hospital Noida,Yatharth Super Speciality Noida,9.63,16.5,1.2
+Moolchand Hospital,Safdarjung Hospital,2.64,4.5,1.2
+Nehru Place,Okhla,2.48,4.3,1.5
+Noida Electronic City,Noida Sec 62,1.33,2.3,1.2
+Noida Electronic City,Vaishali,3.85,6.6,1.1
+Noida Sec 18,Yatharth Super Speciality Noida,7.78,13.3,1.1
+Noida Sec 62,Vaishali,3.46,5.9,1.4
+Punjabi Bagh,Rajouri Garden,2.1,3.6,1.2
+Punjabi Bagh,Rohini,5.4,9.3,1.0
+QRG Super Speciality Hospital,Sarvodaya Hospital,4.75,8.1,1.4
+RML Hospital,Sir Ganga Ram Hospital,1.84,3.2,1.5
+Rajouri Garden,Rohini,7.37,12.6,1.2
+Saket,Vasant Kunj,5.56,9.5,1.4
+Sharda Hospital,Yatharth Super Speciality Noida,10.95,18.8,1.3
+Vaishali,Yashoda Super Speciality Hospital,1.76,3.0,1.3
