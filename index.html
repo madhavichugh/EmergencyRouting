@@ -214,6 +214,8 @@ const localEngine = {
   registerPatient(p) {
     p.id = ++this.patientSeq;
     p.arrival_order = this.patientSeq;
+    p.pickup_loc = p.pickup_loc || p.location || "Connaught Place";
+    p.location = p.pickup_loc;
     p.severity_rank = p.severity === 'Critical' ? 1 : (p.severity === 'High' ? 2 : (p.severity === 'Medium' ? 3 : 4));
     if (p.severity_rank <= 2) {
       this.criticalHeap.push(p);
@@ -434,7 +436,7 @@ const localEngine = {
   },
 
   undo() {
-    if (this.dispatchStack.length === 0) return { success: false, message: "Dispatch history is empty." };
+    if (this.dispatchStack.length === 0) return { success: false, message: "Dispatch history is empty (no active dispatches to undo yet). Please dispatch an ambulance first." };
     let rec = this.dispatchStack.pop();
     let amb = this.ambulances.find(a => a.id === rec.ambulance_id);
     if (amb) amb.status = 'available';
@@ -612,11 +614,13 @@ function renderDispatchResult(data) {
 }
 
 function getFormData() {
+  const loc = document.getElementById('p-loc').value;
   return {
     name: document.getElementById('p-name').value,
     age: parseInt(document.getElementById('p-age').value),
     gender: document.getElementById('p-gender').value,
-    location: document.getElementById('p-loc').value,
+    location: loc,
+    pickup_loc: loc,
     emergency_type: document.getElementById('p-type').value,
     severity: document.getElementById('p-sev').value
   };
